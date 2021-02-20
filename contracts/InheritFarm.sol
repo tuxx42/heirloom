@@ -11,13 +11,13 @@ contract InheritFarm {
 	mapping(address => mapping (address => uint256)) public heirs;
 	mapping(address => uint256) public expirations;
 
-	modifier onlyWhenExpired() {
-		require(block.timestamp >= expirations[msg.sender],
+	modifier onlyExpired(address _benefactor) {
+		require(block.timestamp >= expirations[_benefactor],
 		       "holdings have not expired!");
 		_;
 	}
 
-	event InheritApproval (
+	event Approval (
 		address _benefactor,
 		address _heir,
 		uint256 _value
@@ -34,7 +34,7 @@ contract InheritFarm {
 		owner = msg.sender;
 	}
 
-	function inheritDAI(address _heir, uint256 _value, uint256 _expiration) external {
+	function inherit(address _heir, uint256 _value, uint256 _expiration) external {
 		require(daiToken.allowance(msg.sender, address(this)) >= _value);
 		require(_value > 0, "Value is subzero");
 
@@ -43,10 +43,10 @@ contract InheritFarm {
 		heirs[_benefactor][_heir] = _value;
 		expirations[_benefactor] = _expiration;
 
-		emit InheritApproval(_benefactor, _heir, _value);
+		emit Approval(_benefactor, _heir, _value);
 	}
 
-	function claim(address _benefactor) external onlyWhenExpired returns (bool success) {
+	function claim(address _benefactor) external onlyExpired(_benefactor) returns (bool success) {
 		require(heirs[_benefactor][msg.sender] > 0,
 			"No mapping between benefactor and heir");
 		address _heir = msg.sender;

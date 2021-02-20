@@ -16,7 +16,7 @@ module.exports = async function(callback) {
 	console.log('5')
 	console.log('expiration: ' + expires_in)
 	console.log('now       : ' + now)
-	console.log("Expires in " + expires_in - now + "s")
+	console.log('Expires in: ' + (expires_in - now) + "s")
 
 	await ihf.claim(benefactor, {from: heir})
 	console.log('success')
