@@ -34,7 +34,7 @@ contract InheritFarm {
 		owner = msg.sender;
 	}
 
-	function inherit(address _heir, uint256 _value, uint256 _expiration) external {
+	function inherit(address _heir, uint256 _value, uint256 _expiration) external returns (bool success) {
 		require(daiToken.allowance(msg.sender, address(this)) >= _value);
 		require(_value > 0, "Value is subzero");
 
@@ -44,6 +44,7 @@ contract InheritFarm {
 		expirations[_benefactor] = _expiration;
 
 		emit Approval(_benefactor, _heir, _value);
+		return true;
 	}
 
 	function claim(address _benefactor) external onlyExpired(_benefactor) returns (bool success) {
