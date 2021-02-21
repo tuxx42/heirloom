@@ -7,7 +7,7 @@ module.exports = async function (deployer, network, accounts) {
   const daiToken = await DAIToken.deployed()
 
   // Deploy InheritFarm
-  await deployer.deploy(InheritFarm, daiToken.address)
+  await deployer.deploy(InheritFarm)
   const inheritFarm = await InheritFarm.deployed()
 
   //console.log("transfering DAI to benefactor")
@@ -16,7 +16,7 @@ module.exports = async function (deployer, network, accounts) {
   await daiToken.approve(InheritFarm.address, "1500000000", {from: accounts[0]})
   console.log("Inheiriting DAI")
   let timevar = Math.floor(Date.now() / 1000) + 60
-  let success = await inheritFarm.bequeath(accounts[1],   "1400000000", timevar)
+  let success = await inheritFarm.bequeath(accounts[1], daiToken.address, "1400000000", timevar)
   console.log(success)
   console.log("Success")
 };
