@@ -7,11 +7,11 @@ contract InheritFarm {
 	string public name = "InheritFarm";
 	address public owner;
 
-	mapping(address => mapping (address => uint256)) public heirs;
-	mapping(address => uint256) public expirations;
+	mapping(address => mapping (address => mapping( address => uint256))) public heirs;
+	mapping(address => mapping(address => uint256)) public expirations;
 
-	modifier onlyExpired(address _benefactor) {
-		require(block.timestamp >= expirations[_benefactor],
+	modifier onlyExpired(address _benefactor, ERC20 _erc20) {
+		require(block.timestamp >= expirations[address(_erc20)][_benefactor],
 		       "holdings have not expired!");
 		_;
 	}
@@ -38,20 +38,20 @@ contract InheritFarm {
 
 		address _benefactor = msg.sender;
 
-		heirs[_benefactor][_heir] = _value;
-		expirations[_benefactor] = _expiration;
+		heirs[address(_erc20)][_benefactor][_heir] = _value;
+		expirations[address(_erc20)][_benefactor] = _expiration;
 
 		emit Approval(_benefactor, _heir, _value);
 		return true;
 	}
 
-	function claim(address _benefactor, ERC20 _erc20) external onlyExpired(_benefactor) returns (bool success) {
-		require(heirs[_benefactor][msg.sender] > 0,
+	function claim(address _benefactor, ERC20 _erc20) external onlyExpired(_benefactor, _erc20) returns (bool success) {
+		require(heirs[address(_erc20)][_benefactor][msg.sender] > 0,
 			"No mapping between benefactor and heir");
 		address _heir = msg.sender;
-		uint256 _value = heirs[_benefactor][_heir];
+		uint256 _value = heirs[address(_erc20)][_benefactor][_heir];
 
-		delete heirs[_benefactor][_heir];
+		delete heirs[address(_erc20)][_benefactor][_heir];
 
 		_erc20.transferFrom(_benefactor, _heir, _value);
 
