@@ -1,10 +1,10 @@
 const InheritFarm = artifacts.require("InheritFarm");
-const DAIToken = artifacts.require("DAIToken");
+const FakeDAI = artifacts.require("FakeDAI");
 
 module.exports = async function (deployer, network, accounts) {
   // Deploy DAI Token
-  await deployer.deploy(DAIToken);
-  const daiToken = await DAIToken.deployed()
+  await deployer.deploy(FakeDAI);
+  const daiToken = await FakeDAI.deployed()
 
   // Deploy InheritFarm
   await deployer.deploy(InheritFarm)
