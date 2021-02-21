@@ -21,7 +21,7 @@ contract('InheritFarm', ([benefactor, heir]) => {
 
 		// add unexpired transaction
 		let expires = Math.floor(Date.now() / 1000) + 600
-		await inherit.inherit(heir, value, expires, {from: benefactor})
+		await inherit.bequeath(heir, value, expires, {from: benefactor})
 
 		// check that claim rejected
 		await inherit.claim(benefactor, {from: heir}).should.be.rejectedWith('holdings have not expired!');
@@ -33,7 +33,7 @@ contract('InheritFarm', ([benefactor, heir]) => {
 		let inherit = await InheritFarm.new(dai.address)
 
 		await dai.approve(inherit.address, value)
-		await inherit.inherit(heir, value, Math.floor(Date.now() / 1000) - 60, {from: benefactor})
+		await inherit.bequeath(heir, value, Math.floor(Date.now() / 1000) - 60, {from: benefactor})
 
 		assert.equal(await dai.balanceOf(heir), 0)
 		await inherit.claim(benefactor, {from: heir})
